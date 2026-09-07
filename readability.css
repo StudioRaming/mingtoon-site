@@ -1,0 +1,47 @@
+/* Shared reading and control sizes, including narrow translated layouts. */
+html[lang="ja"] body { letter-spacing: 0; line-height: 1.75; }
+html[lang="ja"] h1, html[lang="ja"] h2, html[lang="ja"] h3 { letter-spacing: 0; line-height: 1.4; }
+.button { font-size: 14px; line-height: 1.4; min-height: 46px; gap: 12px; padding: 12px 18px; max-width: 100%; }
+.locales a { font-size: 12px; padding: 6px 2px; }
+.image-credit, .image-credit a, .hero-bottom a, footer p, footer a { font-size: 12px; line-height: 1.65; }
+.lighting-head button, .compare-tools button { font-size: 12px; min-height: 36px; padding: 8px 12px; }
+.plan-description, .plan-features li, .installation-options p { text-wrap: pretty; }
+.page-hero p, .card p, .addon-row p, .showcase-copy > p, .distribution-section > p { font-size: 15px; line-height: 1.75; }
+.page-hero h1 { font-size: clamp(32px, 4.5vw, 60px); line-height: 1.3; }
+.policy-note, .plan-description, .plan-features li, .plan-bundle ul, .license-notes p, .license-common p, .corporate-rule { font-size: 14px; line-height: 1.75; }
+.download-guide { max-width: 1100px; }
+.download-guide section { padding-block: 32px; }
+.download-guide h2 { font-size: clamp(25px, 2.7vw, 34px); line-height: 1.35; margin: 10px 0 16px; }
+.download-guide ol, .download-guide ul { line-height: 1.8; }
+.download-guide li { margin-bottom: 12px; }
+html .download-guide .installation .installation-options { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 20px; margin: 24px 0; }
+html .download-guide .installation .installation-options article { display: grid; grid-template-rows: auto 1fr auto; gap: 14px; padding: 24px; min-width: 0; align-items: start; border-radius: 14px; }
+html .download-guide .installation .installation-options h3 { margin: 0; font-size: 20px; line-height: 1.4; letter-spacing: 0; text-wrap: initial; }
+html .download-guide .installation .installation-options abbr { text-decoration: none; }
+html .download-guide .installation .installation-options article p { margin: 0; font-size: 15px; line-height: 1.75; overflow-wrap: anywhere; }
+html .download-guide .installation .installation-options .button { width: 100%; margin-top: 8px; padding-inline: 16px; white-space: nowrap; justify-content: space-between; align-self: end; }
+html .download-guide .installation .installation-options .button > span:last-child { flex: 0 0 auto; }
+html .download-guide .installation-existing { margin-top: 28px; padding: 20px 24px; border-left: 2px solid var(--pink); background: #d79aaa07; border-radius: 0 10px 10px 0; font-size: 14px; line-height: 1.85; overflow-wrap: anywhere; }
+.repository-help { margin-top: 28px; padding-block: 18px; }
+.repository-help summary { font-size: 15px; line-height: 1.6; }
+.repository-help > p { margin: 14px 0; line-height: 1.75; }
+.repository-copy { margin-top: 16px; }
+.repository-copy .button { white-space: nowrap; }
+@media (max-width: 800px) {
+  html .download-guide .installation .installation-options { grid-template-columns: 1fr; gap: 14px; }
+  html .download-guide .installation .installation-options article { padding: 22px; gap: 12px; }
+  html .download-guide .installation .installation-options .button { margin-top: 4px; }
+  html .download-guide .installation-existing { padding: 16px 18px; }
+}
+@media (max-width: 600px) {
+  .button, .hero .button, .showcase-actions .button, .plan-cta { font-size: 13px; min-height: 44px; }
+  .page-hero { padding-top: 44px; padding-bottom: 28px; }
+  .page-hero h1 { font-size: 32px; line-height: 1.35; margin-block: 16px; letter-spacing: -.02em; }
+  .page-hero p, .card p, .addon-row p, .showcase-copy > p, .distribution-section > p, .hero-copy p { font-size: 15px; line-height: 1.75; }
+  .kicker, .eyebrow, .policy-note, .distribution-notice, .article-hero figcaption, .footer a { font-size: 12px; }
+  .download-guide { padding-inline: 20px; }
+  .download-guide section { padding-block: 26px; }
+  .card, .license-grid .card { min-height: 0; }
+}
+
+html .plan-bundle .bundle-platform-next { margin-top: 22px; margin-bottom: 8px; font-size: 12px; }
