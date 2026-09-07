@@ -1,0 +1,239 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="description" content="I have spent a lot of time shading characters in Warudo and other 3D applications made for virtual avatars."><link rel="canonical" href="https://studioraming.github.io/mingtoon-site/en/posts/developing-mingtoon/"><link rel="alternate" hreflang="ko" href="https://studioraming.github.io/mingtoon-site/ko/posts/developing-mingtoon/"><link rel="alternate" hreflang="en" href="https://studioraming.github.io/mingtoon-site/en/posts/developing-mingtoon/"><link rel="alternate" hreflang="ja" href="https://studioraming.github.io/mingtoon-site/ja/posts/developing-mingtoon/"><link rel="alternate" hreflang="x-default" href="https://studioraming.github.io/mingtoon-site/ko/posts/developing-mingtoon/"><link rel="icon" href="/mingtoon-site/favicon.svg"><meta property="og:title" content="Developing MingToon —  Bringing My Shader Experiments Together — MingToon"><meta property="og:description" content="I have spent a lot of time shading characters in Warudo and other 3D applications made for virtual avatars."><meta property="og:image" content="https://studioraming.github.io/mingtoon-site/media/developing-mingtoon/hero-avatar.jpg"><meta property="og:type" content="website"><title>Developing MingToon —  Bringing My Shader Experiments Together — MingToon</title><script>
+      document.documentElement.classList.add("js");
+    </script><link rel="stylesheet" href="/mingtoon-site/_astro/Base.DMFS7Xu4.css"></head><body><div class="ambient-light" aria-hidden="true"><i class="light-cone"></i><i class="light-ray ray-a"></i><i class="light-ray ray-b"></i><i class="pointer-glow"></i></div><a class="skip" href="#main">Skip to content</a><header class="header"><a class="wordmark" href="/mingtoon-site/en/"><b>MING</b><span>TOON</span></a><span class="beta">Open Beta</span><button class="menu-button" data-menu-toggle aria-expanded="false" aria-controls="site-nav"><span>Menu</span></button><div class="nav-wrap" data-menu id="site-nav"><nav aria-label="Main navigation"><a href="/mingtoon-site/en/">Home</a><a aria-current="page" href="/mingtoon-site/en/posts/">Posts</a><a href="/mingtoon-site/en/showcase/">Showcase</a><a href="/mingtoon-site/en/addons/">Official add-ons</a><a href="/mingtoon-site/en/license/">License</a><a href="https://studioraming.github.io/mingtoon-docs/en/" target="_blank">Docs ↗</a></nav><div class="locales" aria-label="Language"><a href="/mingtoon-site/ko/posts/developing-mingtoon/">KO</a><a href="/mingtoon-site/en/posts/developing-mingtoon/" aria-current="page">EN</a><a href="/mingtoon-site/ja/posts/developing-mingtoon/">JA</a></div></div></header><main id="main"><header class="page-hero"><a href="/mingtoon-site/en/posts/">← Back to posts</a><h1>Developing MingToon —  Bringing My Shader Experiments Together</h1><p>I have spent a lot of time shading characters in Warudo and other 3D applications made for virtual avatars.</p><time>2026-07-27</time></header><figure class="article-hero"><img src="/mingtoon-site/media/developing-mingtoon/hero-avatar.jpg" alt="Avatar showcase rendered with MingToon shading"><figcaption>Raming ( ´∀｀ )b (@kim_raming); Avatar model: BOOTH item 6571299</figcaption></figure><article class="prose"><aside class="notice">This article records development plans as of July 27, 2026. MingToon is now in Open Beta; current availability and license terms are listed on the site.</aside><p>I have spent a lot of time shading characters in Warudo and other 3D applications made for virtual avatars.</p>
+<p>I also post the results on X fairly often. Most of those posts are not product announcements. They are short records of whatever I was exploring at the time: a new way to shape facial shadows, a rim that reacts to backlighting, a MatCap treatment, or a different approach to depth-based shading.</p>
+<p>I keep returning to shadows in particular.</p>
+<p>How far should a shadow travel across a face before it stops looking appealing? What is the difference between a soft transition and one that feels deliberately drawn? When a character is backlit, which parts of the light should remain so the face and body do not disappear into the background?</p>
+<p>I have used many existing toon shaders in actual projects, and I have also written smaller shaders whenever a project needed something more specific. Over time, I accumulated a list of things I loved and things I wished I could change.</p>
+<p>One shader might produce beautiful facial shading but make it difficult to separate the colors and composition order of different shadows. Another might have excellent MatCaps and rim lighting, but change too much with camera distance or field of view. Depth-based effects could look wonderful in a controlled scene, yet become difficult to use on real characters because of self-shadowing or host-camera restrictions.</p>
+<p>Eventually, I wanted one place where I could combine the techniques I had been building and testing separately.</p>
+<p>That project became <strong>MingToon</strong>.</p>
+<p><img src="/mingtoon-site/media/developing-mingtoon/material-comparison.jpg" alt="MingToon material comparison"></p>
+<p>Avatar Model : <a href="https://booth.pm/ko/items/6571299">https://booth.pm/ko/items/6571299</a></p>
+<h2 id="i-do-not-think-my-approach-is-the-only-correct-one">I do not think my approach is the only correct one</h2>
+<p>I have not spent most of my career working in VRChat.</p>
+<p>My experience comes mainly from Warudo and other 3D virtual-avatar applications. MingToon started because I wanted to bring some of the shading methods I had developed in those environments into a form that more VRChat creators could also try.</p>
+<p>VRChat already has excellent, widely used toon shaders. I am not trying to present MingToon as a replacement for every one of them, or as a new universal answer.</p>
+<p>I also do not assume that MingToon will be the lightest or fastest toon shader available.</p>
+<p>If a project needs only one very specific look, a small shader written for that single purpose may be faster, easier to understand, and easier to maintain. I have written many small shaders for exactly that reason.</p>
+<p>MingToon is aimed at a different problem.</p>
+<p>I want to gather the toon-shading techniques I have found beautiful across different projects, along with the tools I repeatedly wished I had, and make them convenient to combine in one place. The goal is not simply to accumulate features. It is to make those features cooperate as one look instead of fighting each other.</p>
+<p>At the center of the project are shadow design, response to light direction, and camera-depth effects.</p>
+<h2 id="i-did-not-want-every-shadow-to-end-as-the-same-dark-color">I did not want every shadow to end as the same dark color</h2>
+<p>In a toon shader, I do not think of a shadow as nothing more than an area receiving less light.</p>
+<p>A shadow can organize the volume of the face and body. It can be part of the color design of an illustration. Sometimes it serves a role closer to line art or colored linework than to physically correct lighting.</p>
+<p>That is why MingToon does not treat every kind of shadow as one shared dark value.</p>
+<ul>
+<li><strong>Form Shadow</strong> is the basic, art-directed shading used to organize the character’s shape. Its purpose is not to reproduce every small change in the physical surface. It is meant to keep the major forms of the face and body readable. It supports a second shadow stage, as well as independent control over the transition width and softness.</li>
+<li><strong>Cast Shadow</strong> represents actual light occlusion. It can use a different color and blend mode from the form shadow.</li>
+<li>The camera-depth-based <strong>2D Shadow</strong> is treated as another independent layer. It is intended for stylized shadows cast by bangs, accessories, or nearby geometry across the face and body—shapes that are often difficult to control with a conventional shadow map alone.</li>
+</ul>
+<p>If these shadows are assigned different colors, I do not want them to collapse into one color whenever they overlap in a dark region. MingToon therefore keeps their masks and colors separate and combines them in a deliberate order.</p>
+<p>The shared shadow boundary can also have its own color, width, strength, and blur. It can be used as a natural transition, a colored border, or something closer to subtle linework.</p>
+<p>I also added a <strong>Shadow Pattern</strong> mode for halftone and print-like shading. The pattern is not simply placed on top of the shadow as a color texture. It acts as a threshold field. As the surface becomes darker, the dots and lines grow, which produces a response closer to printed screentone than to a static overlay.</p>
+<p>The priority is not for every shadow to be physically exact. The priority is for the shadow to organize the character beautifully.</p>
+<p><img src="/mingtoon-site/media/developing-mingtoon/showcase-shadow.jpg" alt="Layered progression from base material to form shadow and 2D rim"></p>
+<p><em>MingToon’s layered shading progression: base material, Form Shadow, 2D Shadow, and backlight-responsive 2D Rim Light. Each stage is added independently, allowing the character’s volume, depth, and silhouette lighting to be shaped without repainting the original textures.</em></p>
+<p><img src="/mingtoon-site/media/developing-mingtoon/shadow-pattern.jpg" alt="Shadow pattern shapes growing as shading deepens"></p>
+<p><em>The pattern is used as a shadow threshold rather than a tint texture, so its shapes grow as the shading becomes deeper.</em></p>
+<h2 id="a-rimlight-that-becomes-stronger-in-backlight">A RimLight that becomes stronger in backlight</h2>
+<p>I did not want rim lighting to behave like a decoration pasted around the character at a constant intensity.</p>
+<p>Under strong frontal lighting, the character’s surface is already bright. A strong rim in that situation can make the silhouette feel unnecessarily busy.</p>
+<p>Under backlighting, however, the face and body become darker and can easily merge with the background. That is when a stronger silhouette light becomes most useful.</p>
+<p>MingToon’s <strong>2D Rim</strong> therefore does more than display a camera-depth discontinuity.</p>
+<p>It combines the silhouette mask derived from depth with the current light direction and the amount of backlighting. As the light moves behind the character, the rim can become more pronounced. Under frontal lighting, it can remain restrained.</p>
+<p>Additional lights can also influence the rim with their own direction and color. I wanted the effect to react to the lighting around the character rather than remain attached to a single main light.</p>
+<p>The apparent width of the rim was another important concern.</p>
+<p>A rim tuned for a facial close-up can almost disappear in a full-body shot, or suddenly become too thick when the camera field of view changes. MingToon therefore applies camera-distance and projection compensation to the 2D Rim and related Fresnel effects.</p>
+<p>The goal is not to preserve one exact world-space width. It is to prevent the visible region of the effect from changing too dramatically when the framing changes.</p>
+<video controls muted playsinline preload="metadata" poster="/mingtoon-site/media/developing-mingtoon/backlight-rim-poster.jpg">
+  <source src="/mingtoon-site/media/developing-mingtoon/backlight-rim.mp4" type="video/mp4">
+</video>
+<h2 id="light-that-remains-inside-the-shadow">Light that remains inside the shadow</h2>
+<p>While working on backlighting, I realized that the silhouette was not the only place where I wanted light to survive. I also wanted a controlled amount of light inside the shadow itself.</p>
+<p>When the entire shadow side collapses into one color, the structure of the face and body can disappear. Brightening the whole shadow, however, weakens the contrast that makes backlighting attractive.</p>
+<p>This led to the <strong>Shadow Interior Reflection</strong> feature.</p>
+<p>It does not simply add one fixed color over the shadow. It responds to the direction and color of the main light, the environment lighting, and additional lights, so it can change with the scene rather than appearing as a static decoration.</p>
+<p>It is not meant to be a physically exact simulation of indirect illumination. It is an art-directed tool that borrows information from the real lighting environment and preserves just enough shape and color inside an anime character’s shadow.</p>
+<p>MingToon includes Rim Shade, Fresnel Rim, 2D Rim, and Shadow Interior Reflection because they serve different purposes.</p>
+<p>Rim Shade darkens and organizes the silhouette. Fresnel Rim creates view-dependent light. The 2D Rim combines camera depth with light direction. Shadow Interior Reflection preserves form within the dark side.</p>
+<p>Rather than asking one rim-light equation to solve every situation, I prefer to separate the roles and let them be combined as needed.</p>
+<h2 id="using-depth-as-an-illustration-tool">Using depth as an illustration tool</h2>
+<p>Depth-based effects are not minor extras in MingToon. They are one of its main areas of focus.</p>
+<p>Camera depth is usually associated with occlusion or post-processing, but in toon shading it can also become raw material for redrawing a character’s shape.</p>
+<p>The main depth-driven features are the 2D Rim, 2D Shadow, and <strong>Inner Outline</strong>.</p>
+<p>The 2D Rim finds the character’s silhouette from the depth difference between the character and its surroundings, then combines it with the lighting and backlight response.</p>
+<p>The 2D Shadow compares the current surface with shifted depth samples to create stylized shadows from bangs, accessories, and nearby objects.</p>
+<p>The Inner Outline follows visible depth changes and silhouettes to draw edges that a conventional hull outline cannot reliably capture, particularly on thin planes.</p>
+<p>The hardest design problem in depth-based shadows is self-shadowing.</p>
+<p>If the effect reacts too sensitively to depth differences, it finds the desired shadow but also interprets tiny changes across the face—or closely layered meshes—as occluders. If the same-surface rejection is too aggressive, useful shadows such as bangs falling over the face disappear as well.</p>
+<p>For that reason, MingToon does not decide the 2D Shadow from one depth difference alone. It considers the receiver surface, distance response, the likelihood of sampling the same surface, and additional stabilization for the face.</p>
+<p>The target behavior is intuitive: nearby occluders should create stronger shadows, while distant ones should gradually become lighter, without allowing the face to become dirty from uncontrolled self-shadowing.</p>
+<p>The colored shadow boundary is also derived from the already-computed shadow coverage instead of continuously adding more depth samples.</p>
+<p>These features are not intended to replace a conventional shadow map. They are illustration tools for graphic effects that are difficult to obtain from real-time cast shadows alone.</p>
+<p><img src="/mingtoon-site/media/developing-mingtoon/showcase-depth.jpg" alt="Camera depth used for projected shadows and rims"></p>
+<p><em>Camera depth is used as drawing data: for projected shadows, light-reactive rims, and illustration-like linework.</em></p>
+<h2 id="a-four-channel-face-sdf-that-responds-vertically-as-well-as-horizontally">A four-channel Face SDF that responds vertically as well as horizontally</h2>
+<p>I also wanted direct control over the shape and timing of facial shadows.</p>
+<p>If an anime-style face is shaded only from its geometric normals, the nose, eye sockets, and smaller surface changes can become more complicated than the intended illustration style. Flattened or custom face normals can help, but they require per-model preparation and may not behave identically after moving the model into a different host application.</p>
+<p>MingToon therefore uses a <strong>Face SDF</strong> as the main art-direction tool for facial shading.</p>
+<p>Many Face SDF systems primarily encode left and right lighting. This works well for a frontal character, but the face may barely respond when the light moves above or below it.</p>
+<p>MingToon packs four directions—left, right, above, and below—into the RGBA channels of one texture.</p>
+<p>The shader calculates the light direction relative to the head and blends the four channels. The facial shadow can therefore respond not only as the light moves horizontally, but also as it moves vertically.</p>
+<p>The SDF is not treated as one finished shadow image. It is closer to a map describing when each region of the face enters shadow and how long it remains lit during the lighting transition.</p>
+<p>One side of the nose may darken earlier depending on the light direction, while a small reflected highlight can remain even when the face reaches its darkest state. A cheek region may remain lit through the middle tones and finally disappear when the whole face enters shadow.</p>
+<p>To make those behaviors easier to author, the tool separates the Face SDF into editable layers for the base shading, nose, cheeks, lips, and eye sockets. Each layer can have its own scale, position, inversion, softness, and timing strength before being combined into one four-channel texture.</p>
+<p>The authoring tool can also generate a dedicated Face SDF UV channel from the front view of the model. This reduces dependence on the original facial UV layout.</p>
+<p>Multiple textures and layers are used while editing, but the final shader samples only one combined Face SDF texture. No runtime script is required to apply it.</p>
+<p><img src="/mingtoon-site/media/developing-mingtoon/face-sdf-preview.jpg" alt="Face SDF shading preview"></p>
+<video controls muted playsinline preload="metadata" poster="/mingtoon-site/media/developing-mingtoon/face-sdf-motion-poster.jpg">
+  <source src="/mingtoon-site/media/developing-mingtoon/face-sdf-motion.mp4" type="video/mp4">
+</video>
+<p><em>The Face SDF responds vertically as well as horizontally. Nose and cheek layers are not simple decals; they control when those regions enter and leave shadow.</em></p>
+<h2 id="avoiding-a-complete-facial-uv-rebuild-for-every-model">Avoiding a complete facial UV rebuild for every model</h2>
+<p>Making a Face SDF easy to use also required addressing the fact that every model has a different facial UV layout.</p>
+<p>On many characters, the face, eyebrows, eyelashes, and eye-area meshes occupy completely separate UV islands. They appear connected from the front, but a Face SDF sampled through the original UV can break at every island boundary.</p>
+<p>The authoring tool therefore generates a new Face SDF UV channel from the front view in the Unity scene.</p>
+<p>It does not modify the UV used by the original face texture. Instead, it writes the front-projected coordinates into a separate unused UV channel. Facial parts that are unrelated in the original texture layout can share one continuous coordinate system when viewed from the front.</p>
+<p>The SDF layers can then be positioned and scaled while previewing them directly on the model. Once editing is complete, the layers and UV data flow into the final MingToon Face SDF.</p>
+<p><img src="/mingtoon-site/media/developing-mingtoon/face-sdf-uv.jpg" alt="Separate UV arranging facial parts in one coordinate system"></p>
+<p><em>The original texture UV remains untouched. A separate front-projected UV channel places disconnected facial parts into one Face SDF coordinate system.</em></p>
+<p><img src="/mingtoon-site/media/developing-mingtoon/showcase-authoring.jpg" alt="Face SDF authoring layers previewed on the model"></p>
+<p><em>Facial details are adjusted as separate authoring layers and previewed directly on the model. The final bake combines them into one four-channel SDF</em></p>
+<h2 id="an-inner-outline-for-plane-geometry-that-hull-outlines-miss">An Inner Outline for plane geometry that hull outlines miss</h2>
+<p>I want the outline to feel like part of the character’s final color and shading, not simply a black line added at the end.</p>
+<p>MingToon combines a <strong>Hull Outline</strong> with an <strong>Inner Outline</strong>.</p>
+<p>The Hull Outline expands the mesh and draws its back faces. It is a stable way to define the outer silhouette of volumetric geometry such as the head, body, and clothing.</p>
+<p>Not every character part is volumetric, however.</p>
+<p>Hair cards, eyelashes, ribbons, accessories, and some clothing elements are often made from single planes. Because a hull outline depends on expanded back faces, it may fail to draw the desired boundary of those thin planes, or it may not follow their visible shape correctly.</p>
+<p>The Inner Outline is intended to fill that gap using camera depth.</p>
+<p>Despite the name, it is not limited to internal boundaries. It follows visible depth changes and silhouettes, allowing it to draw the edges of thin planes that the hull method cannot capture.</p>
+<p>It can trace the tips of plane-based hair or a thin accessory, and it can also organize overlaps between the face, bangs, and clothing in a way that resembles illustration linework.</p>
+<p>The Hull Outline is responsible for the broad, stable silhouette of solid geometry. The Inner Outline supplies the finer linework around planes and small overlapping forms.</p>
+<p>Used together, the hull can preserve the large character silhouette while the Inner Outline fills in the hair cards, ribbons, and thin shapes the hull would otherwise miss.</p>
+<p>Outline color can inherit the character’s base color and final shading instead of remaining one fixed black. This allows the linework on the lit and shadowed sides to remain compatible with the current material and shadow palette.</p>
+<p>A separate color and blend mode can then be added on top, ranging from soft colored linework to a stronger comic-style outline.</p>
+<p><img src="/mingtoon-site/media/developing-mingtoon/outline.jpg" alt="Hull outline and inner outline comparison"></p>
+<p><em>The Hull Outline stabilizes the silhouette of solid geometry. The Inner Outline restores the edges of plane-based hair and thin accessories that a hull cannot reliably draw</em></p>
+<h2 id="combining-many-forms-of-character-shading-in-one-place">Combining many forms of character shading in one place</h2>
+<p>MingToon also includes the surface tools I frequently need while building character materials.</p>
+<p>It supports a base texture and alpha masking, up to ten texture-stacking layers, five normal layers, and five MatCap layers. AO, emission, metallic or specular PBR workflows, and multiple color blend modes can be combined in the same material system.</p>
+<p>The intention is not to enable every feature on every material.</p>
+<p>Skin, hair, fabric, and metallic accessories all need different treatments. Instead of creating another shader every time the material type changes, I want those treatments to be selectable from one authoring environment.</p>
+<p>As the feature set grew, the Inspector became just as important as the shader code.</p>
+<p>The <strong>Simple</strong> mode exposes the controls used most often. <strong>Full</strong> mode contains every layer and advanced option. <strong>Bulk</strong> mode edits shared settings across multiple materials. Search, localization, presets, module-level toggles, and per-property reset controls are also part of the workflow.</p>
+<p>I am also building a conversion path that carries common textures, colors, masks, normals, and MatCap settings into an editable MingToon material.</p>
+<p>It is not meant to produce mathematically identical pixels between two different lighting models. It is meant to provide a useful starting point instead of requiring every converted material to be rebuilt from zero.</p>
+<h2 id="full-featured-while-editing-reduced-to-what-is-needed-at-runtime">Full-featured while editing, reduced to what is needed at runtime</h2>
+<p>A full authoring shader with many modules cannot be as simple as a tiny shader written for one effect.</p>
+<p>That is why MingToon separates the goals of editing and runtime execution.</p>
+<p>The editable shader is always the full version. While building the material, every module remains available without constantly switching between different shader files.</p>
+<p>Before final use, the bake system analyzes the material and generates a shader containing only the features that may actually be needed.</p>
+<p>Zero-strength depth effects exit before sampling depth. Additional lights that cannot contribute are rejected before expensive lighting work. Repeated depth and lighting values are shared. During baking, unused modules and unused layer counts can be removed from the shader source entirely.</p>
+<p>The analyzer also considers AnimationClips and Animator references. A module that is disabled in the current Inspector may still be enabled later by an animation, so the bake process preserves features that have a real dynamic dependency.</p>
+<p>For VRChat, the target is a final avatar that does not depend on custom runtime MonoBehaviours. Unity authoring tools may generate the Face SDF UVs, compose layers, and analyze features, but the finished result should consist of the baked shader, materials, and textures.</p>
+<p>MingToon is also being kept usable as a character shader in Warudo, including its free edition. However, Warudo is often used for streaming and monetized activity, so that usage should not automatically be grouped together with personal non-commercial use.</p>
+<h2 id="a-shader-for-convenient-look-development-not-a-claim-to-be-universally-fastest">A shader for convenient look development, not a claim to be universally fastest</h2>
+<p>Because the editable shader contains many features, I cannot claim that it is inherently faster than every small specialized shader.</p>
+<p>Instead, I am optimizing the places where work can be removed without sacrificing the intended look.</p>
+<p>A zero-strength depth effect exits before reading the depth texture. Additional lights that cannot contribute are skipped before the expensive shading path. Repeated depth and lighting calculations are shared, and the default outline mode avoids tangent-space work it does not need.</p>
+<p>Even so, I do not want to convert a source-code reduction directly into a universal FPS claim.</p>
+<p>Real performance depends on avatar geometry, transparency, overdraw, light count, camera count, and the target GPU. Until the comparisons are reproducible under matching conditions, I would rather not describe MingToon as the fastest option.</p>
+<p>For one narrowly defined look, a short purpose-built shader may remain the better tool. For creators who want to combine many toon techniques across different characters and materials, a full authoring environment followed by a reduced bake may be more convenient.</p>
+<p>MingToon is being built for the latter case.</p>
+<h2 id="i-want-to-see-what-other-people-make-with-it">I want to see what other people make with it</h2>
+<p>When MingToon is ready, I plan to distribute it free for clearly personal, non-commercial use.</p>
+<p>The main reason is that I want to see how the shading methods I have used in Warudo and other virtual-avatar projects are interpreted across many different VRChat characters.</p>
+<p>Posting shader work on X has repeatedly shown me that the same feature can create a completely different impression depending on the model’s face, texture, palette, lighting, and the artist using it.</p>
+<p>Seeing only the handful of demos I create would be less interesting than seeing many VRChat creators adapt it to their own avatars and tastes.</p>
+<p>One person may use the colored shadow border as linework. Another may make the backlight-reactive 2D Rim part of a character’s signature look. The four-channel Face SDF may also produce styles and shapes I never considered while building the default examples.</p>
+<p>I want to see those results, learn from the unexpected uses, and feed the weaknesses discovered by real projects back into MingToon.</p>
+<p>Streaming or monetized broadcasting in Warudo can be connected to commercial activity, so I plan to define that usage separately from free personal non-commercial use.</p>
+<p>MingToon is not a summary of many years spent making VRChat avatars.</p>
+<p>It is closer to an attempt to carry the shadow, backlight, and depth-based techniques I have explored in Warudo and other 3D virtual-avatar applications into a form that can also be used in VRChat.</p>
+<p>My choices may not be the correct answer for every character, and MingToon may not be the smallest or fastest shader for every project.</p>
+<p>What I am trying to do is bring together the techniques I have found beautiful while using and building many different toon shaders—especially the treatment of shadows, backlighting, and camera depth—and make them convenient to combine in one place.</p>
+<p>The shader experiments I used to post one by one on X are slowly becoming parts of one system.</p>
+<hr>
+<p>Original article by <a href="https://x.com/kim_raming">Raming ( ´∀｀ )b (@kim_raming)</a>: <a href="https://x.com/kim_raming/status/2081531269624820110">View on X</a>.</p>
+<p>Avatar model: <a href="https://booth.pm/ko/items/6571299">BOOTH item 6571299</a>.</p><p><a class="button" href="https://x.com/kim_raming/status/2081531269624820110">Original ↗</a></p></article></main><footer><div><b>StudioRaming</b><p>Support &amp; links</p></div><div class="footer-links"><a href="/mingtoon-site/en/showcase/">Showcase</a><a href="https://discord.gg/Zsj6pkWKKs">Bug-report channel · Discord ↗</a><a href="mailto:studioraming@gmail.com">Business enquiries · Email ↗</a><a href="https://x.com/kim_raming">X ↗</a><a href="https://studioraming.github.io/mingtoon-docs/en/">Docs ↗</a><a href="/mingtoon-site/en/download/">Join Open Beta ↗</a></div><small>© 2026 StudioRaming</small></footer><script>
+      const seen = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("seen");
+              seen.unobserve(e.target);
+            }
+          }),
+        { threshold: 0.12 },
+      );
+      document
+        .querySelectorAll("[data-reveal]")
+        .forEach((e) => seen.observe(e));
+      const menu = document.querySelector("[data-menu]"),
+        toggle = document.querySelector("[data-menu-toggle]");
+      toggle?.addEventListener("click", () => {
+        const open = menu?.toggleAttribute("data-open");
+        toggle.setAttribute("aria-expanded", String(open));
+      });
+      addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && menu?.hasAttribute("data-open")) {
+          menu.removeAttribute("data-open");
+          toggle?.setAttribute("aria-expanded", "false");
+          toggle?.focus();
+        }
+      });
+      const videos = [...document.querySelectorAll("video")];
+      const finePointer =
+        matchMedia("(pointer: fine)").matches &&
+        !matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const glow = document.querySelector(".ambient-light");
+      let glowFrame = 0;
+      let lightX = innerWidth * 0.66,
+        lightY = innerHeight * 0.35;
+      let targetX = lightX,
+        targetY = lightY;
+      const followLight = () => {
+        glowFrame = 0;
+        if (document.hidden || !glow) return;
+        lightX += (targetX - lightX) * 0.065;
+        lightY += (targetY - lightY) * 0.065;
+        glow.style.setProperty("--pointer-x", lightX + "px");
+        glow.style.setProperty("--pointer-y", lightY + "px");
+        if (Math.abs(targetX - lightX) + Math.abs(targetY - lightY) > 0.5)
+          glowFrame = requestAnimationFrame(followLight);
+      };
+      if (finePointer && glow)
+        addEventListener(
+          "pointermove",
+          (event) => {
+            targetX = event.clientX;
+            targetY = event.clientY;
+            if (!glowFrame) glowFrame = requestAnimationFrame(followLight);
+          },
+          { passive: true },
+        );
+      const conserve =
+        matchMedia("(prefers-reduced-motion: reduce)").matches ||
+        navigator.connection?.saveData;
+      if (conserve)
+        videos.forEach((v) => {
+          v.autoplay = false;
+          v.pause();
+          v.preload = "metadata";
+        });
+      const videoObserver = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            const v = e.target;
+            if (!e.isIntersecting) v.pause();
+            else if (!conserve && v.autoplay) v.play().catch(() => {});
+          }),
+        { threshold: 0.05 },
+      );
+      videos.forEach((v) => videoObserver.observe(v));
+      document.addEventListener("visibilitychange", () => {
+        document.body.classList.toggle("motion-paused", document.hidden);
+        if (document.hidden) videos.forEach((v) => v.pause());
+      });
+    </script></body></html>

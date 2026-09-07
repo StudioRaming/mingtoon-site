@@ -1,0 +1,239 @@
+<!DOCTYPE html><html lang="ja"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="description" content="私はWarudoやバーチャルアバター向け3Dアプリケーションで、長い間キャラクターシェーディングに取り組んできました。"><link rel="canonical" href="https://studioraming.github.io/mingtoon-site/ja/posts/developing-mingtoon/"><link rel="alternate" hreflang="ko" href="https://studioraming.github.io/mingtoon-site/ko/posts/developing-mingtoon/"><link rel="alternate" hreflang="en" href="https://studioraming.github.io/mingtoon-site/en/posts/developing-mingtoon/"><link rel="alternate" hreflang="ja" href="https://studioraming.github.io/mingtoon-site/ja/posts/developing-mingtoon/"><link rel="alternate" hreflang="x-default" href="https://studioraming.github.io/mingtoon-site/ko/posts/developing-mingtoon/"><link rel="icon" href="/mingtoon-site/favicon.svg"><meta property="og:title" content="MingToonの開発 — シェーダー実験をひとつにまとめる — MingToon"><meta property="og:description" content="私はWarudoやバーチャルアバター向け3Dアプリケーションで、長い間キャラクターシェーディングに取り組んできました。"><meta property="og:image" content="https://studioraming.github.io/mingtoon-site/media/developing-mingtoon/hero-avatar.jpg"><meta property="og:type" content="website"><title>MingToonの開発 — シェーダー実験をひとつにまとめる — MingToon</title><script>
+      document.documentElement.classList.add("js");
+    </script><link rel="stylesheet" href="/mingtoon-site/_astro/Base.DMFS7Xu4.css"></head><body><div class="ambient-light" aria-hidden="true"><i class="light-cone"></i><i class="light-ray ray-a"></i><i class="light-ray ray-b"></i><i class="pointer-glow"></i></div><a class="skip" href="#main">本文へ移動</a><header class="header"><a class="wordmark" href="/mingtoon-site/ja/"><b>MING</b><span>TOON</span></a><span class="beta">オープンベータ</span><button class="menu-button" data-menu-toggle aria-expanded="false" aria-controls="site-nav"><span>メニュー</span></button><div class="nav-wrap" data-menu id="site-nav"><nav aria-label="メインメニュー"><a href="/mingtoon-site/ja/">ホーム</a><a aria-current="page" href="/mingtoon-site/ja/posts/">ニュース</a><a href="/mingtoon-site/ja/showcase/">作例</a><a href="/mingtoon-site/ja/addons/">公式アドオン</a><a href="/mingtoon-site/ja/license/">ライセンス</a><a href="https://studioraming.github.io/mingtoon-docs/ja/" target="_blank">ドキュメント ↗</a></nav><div class="locales" aria-label="言語"><a href="/mingtoon-site/ko/posts/developing-mingtoon/">KO</a><a href="/mingtoon-site/en/posts/developing-mingtoon/">EN</a><a href="/mingtoon-site/ja/posts/developing-mingtoon/" aria-current="page">JA</a></div></div></header><main id="main"><header class="page-hero"><a href="/mingtoon-site/ja/posts/">← 一覧へ</a><h1>MingToonの開発 — シェーダー実験をひとつにまとめる</h1><p>私はWarudoやバーチャルアバター向け3Dアプリケーションで、長い間キャラクターシェーディングに取り組んできました。</p><time>2026-07-27</time></header><figure class="article-hero"><img src="/mingtoon-site/media/developing-mingtoon/hero-avatar.jpg" alt="MingToonシェーディングで描画したアバターの例"><figcaption>Raming ( ´∀｀ )b (@kim_raming)、アバターモデル: BOOTH item 6571299</figcaption></figure><article class="prose"><aside class="notice">この記事は2026年7月27日時点の開発計画を記録したものです。MingToonは現在オープンベータで、最新の配布状況とライセンス条件はこのサイトで確認できます。</aside><p>私はWarudoやバーチャルアバター向け3Dアプリケーションで、長い間キャラクターシェーディングに取り組んできました。</p>
+<p>成果はXにもよく投稿しています。その多くは製品発表ではなく、その時々に探っていた顔の影、逆光に反応するリム、MatCap表現、深度ベースのシェーディングを短く記録したものです。</p>
+<p>なかでも、私は何度も影へ戻ってきます。</p>
+<p>顔を横切る影は、どこまで進めば魅力を保てるのでしょう。柔らかな遷移と意図的に描いたような遷移は何が違うのでしょう。逆光のとき、顔と体が背景に溶け込まないためには、どの光を残すべきでしょうか。</p>
+<p>実際のプロジェクトで既存のトゥーンシェーダーを数多く使い、より具体的な要件には小さなシェーダーも書いてきました。その中で、好きな点と変えたい点が積み重なりました。</p>
+<p>顔の陰影は美しくても、影ごとの色や合成順を分けにくいシェーダーがありました。MatCapとリムライトは優秀でも、距離や画角で大きく変わるものもありました。深度効果は管理されたシーンでは美しくても、自己遮蔽やホストカメラの制約で実際のキャラクターには使いにくいことがありました。</p>
+<p>やがて、別々に作り試してきた技法を一か所で組み合わせたいと思いました。</p>
+<p>そのプロジェクトが<strong>MingToon</strong>です。</p>
+<p><img src="/mingtoon-site/media/developing-mingtoon/material-comparison.jpg" alt="MingToonのマテリアル比較"></p>
+<p>アバターモデル: <a href="https://booth.pm/ko/items/6571299">https://booth.pm/ko/items/6571299</a></p>
+<h2 id="私の方法だけが唯一の正解だとは考えていません">私の方法だけが唯一の正解だとは考えていません</h2>
+<p>私はキャリアの大半をVRChatで過ごしたわけではありません。</p>
+<p>主な経験はWarudoなどの3Dバーチャルアバター用アプリケーションです。MingToonは、そこで開発した手法をより多くのVRChatクリエイターにも試せる形へ移したいという思いから始まりました。</p>
+<p>VRChatにはすでに優れた広く使われるトゥーンシェーダーがあります。MingToonをすべての代替品や万能の答えとして提示するつもりはありません。</p>
+<p>最も軽く速いシェーダーだとも決めつけません。</p>
+<p>必要なのが一つの明確なルックだけなら、専用の小さなシェーダーの方が速く、理解しやすく、保守もしやすいでしょう。私もその理由で多くの小さなシェーダーを書きました。</p>
+<p>MingToonが扱うのは別の問題です。</p>
+<p>さまざまなプロジェクトで美しいと感じた技法と、繰り返し欲しいと思った道具を集め、便利に組み合わせたいのです。機能を増やすだけでなく、互いに争わず一つのルックとして働かせることが目標です。</p>
+<p>中心にあるのは影の設計、光の方向への反応、カメラ深度の効果です。</p>
+<h2 id="すべての影を同じ暗い色で終わらせたくありませんでした">すべての影を同じ暗い色で終わらせたくありませんでした</h2>
+<p>トゥーンシェーダーの影は、単に光が少ない領域ではありません。</p>
+<p>顔や体の立体感を整理し、イラストの色設計にもなります。物理的な照明より線画や色付きの線に近い役割を持つこともあります。</p>
+<p>そのためMingToonは、すべての影を一つの暗い値として扱いません。</p>
+<ul>
+<li><strong>Form Shadow</strong>はキャラクターの形を整理する基本のアートディレクション用陰影です。物理表面の細かな変化をすべて再現するものではなく、顔と体の大きな形を読みやすく保つ機能です。第2段階の影と、境界幅・柔らかさを個別に制御できます。</li>
+<li><strong>Cast Shadow</strong>は実際の光の遮蔽を表し、Form Shadowとは別の色とブレンド方式を使えます。</li>
+<li>カメラ深度による<strong>2D Shadow</strong>は、もう一つの独立レイヤーです。前髪や装飾、近接ジオメトリが顔や体へ落とす、通常のシャドウマップだけでは制御しにくい様式化された影を扱います。</li>
+</ul>
+<p>別々の色を与えた影が暗部で重なっただけで一色に潰れてはなりません。MingToonはマスクと色を分離し、意図した順序で合成します。</p>
+<p>共有する影の境界にも色、幅、強さ、ぼかしを設定し、自然な遷移、色付きの縁、繊細な線画として使えます。</p>
+<p>ハーフトーンや印刷風の<strong>Shadow Pattern</strong>もあります。色テクスチャを重ねるのではなく閾値場として働き、暗くなるほど点や線が育ってスクリーントーンに近い反応を作ります。</p>
+<p>物理的な厳密さより、影がキャラクターを美しく整理することを優先します。</p>
+<p><img src="/mingtoon-site/media/developing-mingtoon/showcase-shadow.jpg" alt="ベースからForm Shadowと2D Rimまで重なる過程"></p>
+<p><em>ベース、Form Shadow、2D Shadow、逆光反応型2D Rim Lightを独立して加え、元のテクスチャを描き直さず立体感、深度、輪郭光を整えます。</em></p>
+<p><img src="/mingtoon-site/media/developing-mingtoon/shadow-pattern.jpg" alt="陰影が深くなるほど成長するShadow Pattern"></p>
+<p><em>模様は色テクスチャではなく影の閾値なので、陰影が深まるほど形が大きくなります。</em></p>
+<h2 id="逆光で強くなるrimlight">逆光で強くなるRimLight</h2>
+<p>リムライトを一定の強さで輪郭に貼った装飾にはしたくありませんでした。</p>
+<p>強い正面光では表面がすでに明るく、強いリムは輪郭を不必要に騒がしくします。</p>
+<p>逆光では顔と体が暗く背景に埋もれるため、強い輪郭光が最も役立ちます。</p>
+<p>そこで<strong>2D Rim</strong>は、深度の不連続を表示するだけではありません。</p>
+<p>深度由来の輪郭マスクに光方向と逆光量を組み合わせ、光が背後へ回るほど強く、正面では控えめになります。</p>
+<p>追加ライトも方向と色でリムに影響します。一つのメインライトに固定せず、周囲の照明へ反応させました。</p>
+<p>画面上のリム幅も重要でした。</p>
+<p>顔のアップ用のリムは全身で消えたり、画角が変わると太くなりすぎたりします。MingToonは2D RimとFresnel効果に距離・投影補正を行います。</p>
+<p>正確なワールド幅ではなく、構図の変化で見える範囲が激変しないことが目標です。</p>
+<video controls muted playsinline preload="metadata" poster="/mingtoon-site/media/developing-mingtoon/backlight-rim-poster.jpg">
+  <source src="/mingtoon-site/media/developing-mingtoon/backlight-rim.mp4" type="video/mp4">
+</video>
+<h2 id="影の中に残る光">影の中に残る光</h2>
+<p>逆光を扱ううち、輪郭だけでなく影の内部にも制御した光を残したくなりました。</p>
+<p>影側が一色に潰れると顔と体の構造が消えますが、影全体を明るくすると逆光の魅力である対比が弱まります。</p>
+<p>そこで<strong>Shadow Interior Reflection</strong>を作りました。</p>
+<p>固定色を足すのではなく、メインライトの方向と色、環境光、追加ライトに反応してシーンとともに変化します。</p>
+<p>物理的に正確な間接光ではなく、実際の照明情報を借りてアニメ調キャラクターの影に必要な形と色を残す道具です。</p>
+<p>Rim Shade、Fresnel Rim、2D Rim、Shadow Interior Reflectionはそれぞれ異なる役割を持ちます。</p>
+<p>Rim Shadeは輪郭を暗く整理し、Fresnel Rimは視点依存の光を作り、2D Rimは深度と光方向を結び、Shadow Interior Reflectionは暗部の形を保ちます。</p>
+<p>一つの式ですべてを解くより、役割を分けて必要に応じて組み合わせます。</p>
+<h2 id="深度をイラストの道具として使う">深度をイラストの道具として使う</h2>
+<p>深度効果は小さな付加機能ではなく、MingToonの主要テーマです。</p>
+<p>カメラ深度は遮蔽やポスト処理だけでなく、キャラクターの形を描き直す材料になります。</p>
+<p>主な機能は2D Rim、2D Shadow、<strong>Inner Outline</strong>です。</p>
+<p>2D Rimは周囲との深度差から輪郭を見つけ、照明と逆光反応を組み合わせます。</p>
+<p>2D Shadowは現在面とずらした深度サンプルを比較し、前髪、装飾、近接物の様式化された影を作ります。</p>
+<p>Inner Outlineは見える深度変化を追い、通常のハルアウトラインが捉えにくい薄い平面の縁を描きます。</p>
+<p>最大の難題は自己遮蔽です。</p>
+<p>敏感すぎると顔の微細な変化や重なったメッシュまで遮蔽物になり、同一面を強く除外しすぎると前髪の有用な影まで消えます。</p>
+<p>そこで一つの深度差だけでなく、受光面、距離反応、同一面の可能性、顔用の安定化を考慮します。</p>
+<p>近い遮蔽物は強く、遠いものは徐々に薄く影を落とし、制御不能な自己遮蔽で顔を汚さない動作を目指します。</p>
+<p>色付き境界も深度サンプルを増やさず、計算済みの影の範囲から得ます。</p>
+<p>通常のシャドウマップの代替ではなく、リアルタイムのCast Shadowだけでは難しい表現のための道具です。</p>
+<p><img src="/mingtoon-site/media/developing-mingtoon/showcase-depth.jpg" alt="投影影とリムに使うカメラ深度"></p>
+<p><em>カメラ深度を投影影、光反応型リム、イラスト風の線を描くデータとして使います。</em></p>
+<h2 id="水平にも垂直にも反応する4チャンネルface-sdf">水平にも垂直にも反応する4チャンネルFace SDF</h2>
+<p>顔の影の形とタイミングも直接制御したいと考えました。</p>
+<p>幾何法線だけでは鼻や眼窩、細かな凹凸が意図した絵より複雑になります。専用の顔法線はモデルごとの準備が必要で、別のホストでは同じ動作にならない場合があります。</p>
+<p>そこで顔のアートディレクションには<strong>Face SDF</strong>を使います。</p>
+<p>多くのFace SDFは左右の光が中心で、上下へ動く光にはほとんど反応しません。</p>
+<p>MingToonは左、右、上、下を一枚のRGBAチャンネルに格納します。</p>
+<p>頭を基準に光方向を計算して4チャンネルを混ぜるため、水平だけでなく垂直の移動にも反応します。</p>
+<p>SDFは完成した影画像ではなく、顔の各領域がいつ影に入り、どれだけ長く明るさを保つかを示す地図です。</p>
+<p>光方向で鼻の片側が早く暗くなり、最暗部にも小さな反射光を残せます。頬は中間調まで明るく、顔全体が影になる時に消せます。</p>
+<p>基本陰影、鼻、頬、唇、眼窩を別レイヤーにし、拡大率、位置、反転、柔らかさ、タイミングを調整して4チャンネルへ合成します。</p>
+<p>モデル正面から専用Face SDF UVも生成し、元の顔UVへの依存を減らします。</p>
+<p>編集中は複数の画像とレイヤーを使いますが、完成シェーダーは合成済みの一枚だけを参照し、ランタイムスクリプトも不要です。</p>
+<p><img src="/mingtoon-site/media/developing-mingtoon/face-sdf-preview.jpg" alt="Face SDFのシェーディングプレビュー"></p>
+<video controls muted playsinline preload="metadata" poster="/mingtoon-site/media/developing-mingtoon/face-sdf-motion-poster.jpg">
+  <source src="/mingtoon-site/media/developing-mingtoon/face-sdf-motion.mp4" type="video/mp4">
+</video>
+<p><em>Face SDFは水平と垂直に反応します。鼻や頬のレイヤーはデカールではなく、その部位が影へ出入りする時点を制御します。</em></p>
+<h2 id="モデルごとに顔uv全体を作り直さないために">モデルごとに顔UV全体を作り直さないために</h2>
+<p>モデルごとに異なる顔UV配置も解決する必要がありました。</p>
+<p>顔、眉、まつ毛、目周辺が別々のUVアイランドにあると、正面では連続して見えても元のUVで読むSDFは境界ごとに途切れます。</p>
+<p>制作ツールはUnityシーンの正面から新しいFace SDF UVチャンネルを生成します。</p>
+<p>元の顔テクスチャUVは変えず、正面投影座標を未使用の別チャンネルへ書きます。元の配置で離れた部位も一つの連続座標を共有できます。</p>
+<p>モデル上で見ながらレイヤーの位置と大きさを調整し、編集後にレイヤーとUVを最終Face SDFへ渡します。</p>
+<p><img src="/mingtoon-site/media/developing-mingtoon/face-sdf-uv.jpg" alt="顔パーツを一つの座標系へ置く別UV"></p>
+<p><em>元のUVを保ち、別の正面投影チャンネルで離れた顔パーツを一つのFace SDF座標系へ配置します。</em></p>
+<p><img src="/mingtoon-site/media/developing-mingtoon/showcase-authoring.jpg" alt="モデル上で確認するFace SDF制作レイヤー"></p>
+<p><em>顔の細部を別レイヤーで調整しモデル上で確認します。最終ベイクは一枚の4チャンネルSDFへ合成します。</em></p>
+<h2 id="ハルアウトラインが逃す平面のためのinner-outline">ハルアウトラインが逃す平面のためのInner Outline</h2>
+<p>アウトラインを最後に足す黒線ではなく、最終的な色と陰影の一部にしたいと考えました。</p>
+<p>MingToonは<strong>Hull Outline</strong>と<strong>Inner Outline</strong>を組み合わせます。</p>
+<p>Hull Outlineはメッシュを膨らませ裏面を描くため、頭、体、衣服など立体物の外周を安定して定義します。</p>
+<p>しかし、すべての部位が立体とは限りません。</p>
+<p>ヘアカード、まつ毛、リボン、装飾、一部の衣服は一枚の平面です。ハル方式では望む縁が出なかったり、見える形に沿えなかったりします。</p>
+<p>Inner Outlineはカメラ深度でその隙間を補います。</p>
+<p>名前に反して内部境界だけではなく、深度変化と輪郭を追い、薄い平面の縁も描きます。</p>
+<p>平面の髪先や薄い装飾をたどり、顔、前髪、衣服の重なりも線画のように整理します。</p>
+<p>Hull Outlineは立体物の大きく安定した輪郭、Inner Outlineは平面や小さな重なりの細線を担当します。</p>
+<p>両方を使えば大きな輪郭を保ちつつ、ヘアカード、リボン、薄い形を補えます。</p>
+<p>線色は固定の黒ではなくベース色と最終陰影を継承し、明部と暗部の線を現在のパレットになじませられます。</p>
+<p>さらに別の色とブレンドを重ね、柔らかな色線から強いコミック調まで表現できます。</p>
+<p><img src="/mingtoon-site/media/developing-mingtoon/outline.jpg" alt="Hull OutlineとInner Outlineの比較"></p>
+<p><em>Hull Outlineは立体物の輪郭を安定させ、Inner Outlineはハルが逃す平面の髪や薄い装飾の縁を復元します。</em></p>
+<h2 id="多様なキャラクターシェーディングを一か所へ">多様なキャラクターシェーディングを一か所へ</h2>
+<p>キャラクターマテリアル制作で頻繁に使う表面機能も含みます。</p>
+<p>ベーステクスチャとアルファマスク、最大10層のテクスチャ、5層の法線、5層のMatCapに対応します。AO、Emission、Metallic／Specular PBR、複数の色ブレンドを同じシステムで組み合わせられます。</p>
+<p>すべてのマテリアルで全機能を有効にする意図はありません。</p>
+<p>肌、髪、布、金属装飾には異なる処理が必要です。種類ごとに別シェーダーを作らず、一つの制作環境から選べるようにします。</p>
+<p>機能が増えるにつれInspectorもコードと同じくらい重要になりました。</p>
+<p><strong>Simple</strong>は頻出項目、<strong>Full</strong>は全レイヤーと詳細設定、<strong>Bulk</strong>は複数マテリアルの共通設定を編集します。検索、ローカライズ、プリセット、モジュール切替、プロパティごとのリセットも備えます。</p>
+<p>一般的なテクスチャ、色、マスク、法線、MatCapを編集可能なMingToonマテリアルへ移す変換経路も作っています。</p>
+<p>異なる照明モデルで数学的に同じピクセルを作るのではなく、変換後にゼロから作り直さずに済む出発点を提供します。</p>
+<h2 id="編集時はすべての機能を実行時は必要なものだけを">編集時はすべての機能を、実行時は必要なものだけを</h2>
+<p>多くのモジュールを持つ制作シェーダーは、一つの効果専用の小さなシェーダーほど単純にはなりません。</p>
+<p>そこで編集と実行の目標を分けました。</p>
+<p>編集シェーダーは常にフル版で、ファイルを切り替えず全モジュールを使えます。</p>
+<p>完成前にベイクがマテリアルを解析し、実際に必要になり得る機能だけを持つシェーダーを生成します。</p>
+<p>強度0の深度効果はサンプリング前に終了し、寄与しない追加光は高価な処理前に除外します。反復値を共有し、未使用モジュールとレイヤー数はソースから削除できます。</p>
+<p>AnimationClipとAnimatorの参照も調べます。現在無効でもアニメーションで有効になる機能は動的依存として残します。</p>
+<p>VRChatではカスタムランタイムMonoBehaviourに依存しない完成アバターを目指します。UnityツールはUV生成、合成、解析を行いますが、結果はベイク済みシェーダー、マテリアル、テクスチャです。</p>
+<p>Warudo無料版でも使えるようにします。ただし配信や収益活動に使われるWarudoは、個人の非商用利用と自動的に同じ扱いにはできません。</p>
+<h2 id="便利なルック制作のためのシェーダーであり常に最速という主張ではありません">便利なルック制作のためのシェーダーであり、常に最速という主張ではありません</h2>
+<p>編集シェーダーには多くの機能があるため、すべての小型専用シェーダーより速いとは言えません。</p>
+<p>代わりに、意図する見た目を損なわず省ける処理を最適化します。</p>
+<p>強度0なら深度を読む前に終わり、寄与しない光は高価な経路前に省きます。深度・照明計算を共有し、標準アウトラインは不要な接空間処理を避けます。</p>
+<p>それでもソース削減をそのまま普遍的なFPSの主張にはしません。</p>
+<p>性能は形状、透明、オーバードロー、光とカメラの数、GPUに左右されます。同条件で再現できる比較までは最速と説明しません。</p>
+<p>限定された一つのルックなら短い専用シェーダーが適するでしょう。多くの技法をさまざまなキャラクターで組み合わせるなら、完全な制作環境から縮小ベイクする方が便利です。</p>
+<p>MingToonは後者のために作っています。</p>
+<h2 id="ほかの人が作るものを見てみたい">ほかの人が作るものを見てみたい</h2>
+<p>MingToonが準備できたら、明確な個人・非商用利用には無料で配布する予定です。</p>
+<p>Warudoなどで使ってきた手法が、多様なVRChatキャラクターでどう解釈されるかを見たいからです。</p>
+<p>Xへの投稿を通じ、同じ機能でも顔、テクスチャ、配色、照明、作者によって全く違う印象になると何度も感じました。</p>
+<p>私の少数のデモだけより、多くのクリエイターが自分のアバターと好みに合わせる姿を見たいのです。</p>
+<p>色付きの影境界を線画にする人も、逆光型2D Rimを代表的なルックにする人もいるでしょう。4チャンネルFace SDFからも想像しなかった表現が生まれるかもしれません。</p>
+<p>その結果と意外な使い方から学び、実プロジェクトで分かった弱点をMingToonへ戻したいと思います。</p>
+<p>Warudoでの配信や収益化放送は商用活動と結びつくため、無料の個人非商用利用とは別に定義する予定です。</p>
+<p>MingToonは長年VRChatアバターを作った経験の総括ではありません。</p>
+<p>Warudoなどで探ってきた影、逆光、深度の技法をVRChatでも使える形へ運ぶ試みに近いものです。</p>
+<p>私の選択がすべてのキャラクターへの正解とは限らず、すべての案件で最小・最速でもないでしょう。</p>
+<p>多くのトゥーンシェーダーを使い作る中で美しいと感じた技法、とりわけ影、逆光、カメラ深度を一つにまとめ、便利に組み合わせたいのです。</p>
+<p>かつてXへ一つずつ投稿していたシェーダー実験が、少しずつ一つのシステムになっています。</p>
+<hr>
+<p>原文: <a href="https://x.com/kim_raming">Raming ( ´∀｀ )b (@kim_raming)</a>、<a href="https://x.com/kim_raming/status/2081531269624820110">Xで見る</a>。</p>
+<p>アバターモデル: <a href="https://booth.pm/ko/items/6571299">BOOTH item 6571299</a>。</p><p><a class="button" href="https://x.com/kim_raming/status/2081531269624820110">原文 ↗</a></p></article></main><footer><div><b>StudioRaming</b><p>サポート・リンク</p></div><div class="footer-links"><a href="/mingtoon-site/ja/showcase/">作例</a><a href="https://discord.gg/Zsj6pkWKKs">バグ報告チャンネル · Discord ↗</a><a href="mailto:studioraming@gmail.com">法人お問い合わせ · メール ↗</a><a href="https://x.com/kim_raming">X ↗</a><a href="https://studioraming.github.io/mingtoon-docs/ja/">Docs ↗</a><a href="/mingtoon-site/ja/download/">オープンベータに参加 ↗</a></div><small>© 2026 StudioRaming</small></footer><script>
+      const seen = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("seen");
+              seen.unobserve(e.target);
+            }
+          }),
+        { threshold: 0.12 },
+      );
+      document
+        .querySelectorAll("[data-reveal]")
+        .forEach((e) => seen.observe(e));
+      const menu = document.querySelector("[data-menu]"),
+        toggle = document.querySelector("[data-menu-toggle]");
+      toggle?.addEventListener("click", () => {
+        const open = menu?.toggleAttribute("data-open");
+        toggle.setAttribute("aria-expanded", String(open));
+      });
+      addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && menu?.hasAttribute("data-open")) {
+          menu.removeAttribute("data-open");
+          toggle?.setAttribute("aria-expanded", "false");
+          toggle?.focus();
+        }
+      });
+      const videos = [...document.querySelectorAll("video")];
+      const finePointer =
+        matchMedia("(pointer: fine)").matches &&
+        !matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const glow = document.querySelector(".ambient-light");
+      let glowFrame = 0;
+      let lightX = innerWidth * 0.66,
+        lightY = innerHeight * 0.35;
+      let targetX = lightX,
+        targetY = lightY;
+      const followLight = () => {
+        glowFrame = 0;
+        if (document.hidden || !glow) return;
+        lightX += (targetX - lightX) * 0.065;
+        lightY += (targetY - lightY) * 0.065;
+        glow.style.setProperty("--pointer-x", lightX + "px");
+        glow.style.setProperty("--pointer-y", lightY + "px");
+        if (Math.abs(targetX - lightX) + Math.abs(targetY - lightY) > 0.5)
+          glowFrame = requestAnimationFrame(followLight);
+      };
+      if (finePointer && glow)
+        addEventListener(
+          "pointermove",
+          (event) => {
+            targetX = event.clientX;
+            targetY = event.clientY;
+            if (!glowFrame) glowFrame = requestAnimationFrame(followLight);
+          },
+          { passive: true },
+        );
+      const conserve =
+        matchMedia("(prefers-reduced-motion: reduce)").matches ||
+        navigator.connection?.saveData;
+      if (conserve)
+        videos.forEach((v) => {
+          v.autoplay = false;
+          v.pause();
+          v.preload = "metadata";
+        });
+      const videoObserver = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            const v = e.target;
+            if (!e.isIntersecting) v.pause();
+            else if (!conserve && v.autoplay) v.play().catch(() => {});
+          }),
+        { threshold: 0.05 },
+      );
+      videos.forEach((v) => videoObserver.observe(v));
+      document.addEventListener("visibilitychange", () => {
+        document.body.classList.toggle("motion-paused", document.hidden);
+        if (document.hidden) videos.forEach((v) => v.pause());
+      });
+    </script></body></html>

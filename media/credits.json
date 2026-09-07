@@ -1,0 +1,476 @@
+[
+  {
+    "id": "hero-avatar",
+    "src": "/media/developing-mingtoon/hero-avatar.jpg",
+    "type": "image",
+    "alt": {
+      "ko": "MingToon 셰이딩을 적용한 아바타 쇼케이스",
+      "en": "Avatar showcase rendered with MingToon shading",
+      "ja": "MingToonシェーディングを適用したアバターのショーケース"
+    },
+    "credit": "Raming ( ´∀｀ )b (@kim_raming); Avatar model: BOOTH item 6571299",
+    "sourceUrl": "https://pbs.twimg.com/media/HOMVlxybIAAUJXx.jpg?name=orig"
+  },
+  {
+    "id": "showcase-authoring",
+    "src": "/media/developing-mingtoon/showcase-authoring.jpg",
+    "type": "image",
+    "alt": {
+      "ko": "모델에서 미리 보는 Face SDF 저작 레이어",
+      "en": "Face SDF authoring layers previewed on the model",
+      "ja": "モデル上で確認するFace SDFオーサリングレイヤー"
+    },
+    "credit": "Raming ( ´∀｀ )b (@kim_raming); Avatar model: BOOTH item 6571299",
+    "sourceUrl": "https://pbs.twimg.com/media/HOMSEg9b0AAVmsx.jpg?name=orig"
+  },
+  {
+    "id": "showcase-depth",
+    "src": "/media/developing-mingtoon/showcase-depth.jpg",
+    "type": "image",
+    "alt": {
+      "ko": "투영 그림자와 림에 사용되는 카메라 깊이",
+      "en": "Camera depth used for projected shadows and rims",
+      "ja": "投影シャドウとリムに使われるカメラ深度"
+    },
+    "credit": "Raming ( ´∀｀ )b (@kim_raming); Avatar model: BOOTH item 6571299",
+    "sourceUrl": "https://pbs.twimg.com/media/HOMQSyabQAAsucM.jpg?name=orig"
+  },
+  {
+    "id": "article-outline",
+    "src": "/media/developing-mingtoon/outline.jpg",
+    "type": "image",
+    "alt": {
+      "ko": "헐 아웃라인과 이너 아웃라인 비교",
+      "en": "Hull outline and inner outline comparison",
+      "ja": "ハルアウトラインとインナーアウトラインの比較"
+    },
+    "credit": "Raming ( ´∀｀ )b (@kim_raming); Avatar model: BOOTH item 6571299",
+    "sourceUrl": "https://pbs.twimg.com/media/HOMTtPhaMAAKj0a.jpg?name=orig"
+  },
+  {
+    "id": "article-face-sdf-preview",
+    "src": "/media/developing-mingtoon/face-sdf-preview.jpg",
+    "type": "image",
+    "alt": {
+      "ko": "Face SDF 셰이딩 미리보기",
+      "en": "Face SDF shading preview",
+      "ja": "Face SDFシェーディングのプレビュー"
+    },
+    "credit": "Raming ( ´∀｀ )b (@kim_raming); Avatar model: BOOTH item 6571299",
+    "sourceUrl": "https://pbs.twimg.com/media/HOMQvYeasAA1FJJ.jpg?name=orig"
+  },
+  {
+    "id": "article-face-sdf-motion",
+    "src": "/media/developing-mingtoon/face-sdf-motion.mp4",
+    "type": "video",
+    "alt": {
+      "ko": "수평과 수직 조명에 반응하는 Face SDF",
+      "en": "Face SDF responding to horizontal and vertical light",
+      "ja": "水平・垂直の光に反応するFace SDF"
+    },
+    "credit": "Raming ( ´∀｀ )b (@kim_raming); Avatar model: BOOTH item 6571299",
+    "sourceUrl": "https://video.twimg.com/amplify_video/2081525628726390784/vid/avc1/686x898/8LjiH_0Bm_fN0q_W.mp4?tag=29"
+  },
+  {
+    "id": "showcase-shadow",
+    "src": "/media/developing-mingtoon/showcase-shadow.jpg",
+    "type": "image",
+    "alt": {
+      "ko": "기본 머티리얼부터 폼 섀도우와 2D 림까지의 단계",
+      "en": "Layered progression from base material to form shadow and 2D rim",
+      "ja": "ベースマテリアルからフォームシャドウと2Dリムまでの段階"
+    },
+    "credit": "Raming ( ´∀｀ )b (@kim_raming); Avatar model: BOOTH item 6571299",
+    "sourceUrl": "https://pbs.twimg.com/media/HOMGlY4bkAA4CRZ.jpg?name=orig"
+  },
+  {
+    "id": "article-material-comparison",
+    "src": "/media/developing-mingtoon/material-comparison.jpg",
+    "type": "image",
+    "alt": {
+      "ko": "MingToon 머티리얼 비교",
+      "en": "MingToon material comparison",
+      "ja": "MingToonマテリアルの比較"
+    },
+    "credit": "Raming ( ´∀｀ )b (@kim_raming); Avatar model: BOOTH item 6571299",
+    "sourceUrl": "https://pbs.twimg.com/media/HOMKMhCaYAE_gIV.jpg?name=orig"
+  },
+  {
+    "id": "article-shadow-pattern",
+    "src": "/media/developing-mingtoon/shadow-pattern.jpg",
+    "type": "image",
+    "alt": {
+      "ko": "어두워질수록 커지는 섀도우 패턴",
+      "en": "Shadow pattern shapes growing as shading deepens",
+      "ja": "陰影が深くなるほど大きくなるシャドウパターン"
+    },
+    "credit": "Raming ( ´∀｀ )b (@kim_raming); Avatar model: BOOTH item 6571299",
+    "sourceUrl": "https://pbs.twimg.com/media/HOMH79xaQAEJmz_.jpg?name=orig"
+  },
+  {
+    "id": "article-face-sdf-uv",
+    "src": "/media/developing-mingtoon/face-sdf-uv.jpg",
+    "type": "image",
+    "alt": {
+      "ko": "얼굴 부위를 하나의 좌표계에 배치한 별도 UV",
+      "en": "Separate UV arranging facial parts in one coordinate system",
+      "ja": "顔パーツを一つの座標系に配置した専用UV"
+    },
+    "credit": "Raming ( ´∀｀ )b (@kim_raming); Avatar model: BOOTH item 6571299",
+    "sourceUrl": "https://pbs.twimg.com/media/HOMSajCbUAAdUFd.jpg?name=orig"
+  },
+  {
+    "id": "article-backlight-rim",
+    "src": "/media/developing-mingtoon/backlight-rim.mp4",
+    "type": "video",
+    "alt": {
+      "ko": "역광에 반응하는 림 조명",
+      "en": "Rim lighting reacting to backlight",
+      "ja": "逆光に反応するリムライト"
+    },
+    "credit": "Raming ( ´∀｀ )b (@kim_raming); Avatar model: BOOTH item 6571299",
+    "sourceUrl": "https://video.twimg.com/tweet_video/HOMOAe7aMAAUj_L.mp4"
+  },
+  {
+    "id": "comparison-photo-01-before-720",
+    "src": "/media/comparison/photo-01/before-720x1280.webp",
+    "type": "image",
+    "alt": {
+      "ko": "MingToon 적용 전 비교 이미지",
+      "en": "Before MingToon comparison image",
+      "ja": "MingToon適用前の比較画像"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "comparison-photo-01-before-1080",
+    "src": "/media/comparison/photo-01/before-1080x1920.webp",
+    "type": "image",
+    "alt": {
+      "ko": "MingToon 적용 전 비교 이미지",
+      "en": "Before MingToon comparison image",
+      "ja": "MingToon適用前の比較画像"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "comparison-photo-01-before-1440",
+    "src": "/media/comparison/photo-01/before-1440x2560.webp",
+    "type": "image",
+    "alt": {
+      "ko": "MingToon 적용 전 비교 이미지",
+      "en": "Before MingToon comparison image",
+      "ja": "MingToon適用前の比較画像"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "comparison-photo-01-after-720",
+    "src": "/media/comparison/photo-01/after-720x1280.webp",
+    "type": "image",
+    "alt": {
+      "ko": "MingToon 적용 후 비교 이미지",
+      "en": "After MingToon comparison image",
+      "ja": "MingToon適用後の比較画像"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "comparison-photo-01-after-1080",
+    "src": "/media/comparison/photo-01/after-1080x1920.webp",
+    "type": "image",
+    "alt": {
+      "ko": "MingToon 적용 후 비교 이미지",
+      "en": "After MingToon comparison image",
+      "ja": "MingToon適用後の比較画像"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "comparison-photo-01-after-1440",
+    "src": "/media/comparison/photo-01/after-1440x2560.webp",
+    "type": "image",
+    "alt": {
+      "ko": "MingToon 적용 후 비교 이미지",
+      "en": "After MingToon comparison image",
+      "ja": "MingToon適用後の比較画像"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "lighting-angle-01-720",
+    "src": "/media/lighting/angle-01-720x960.webp",
+    "type": "image",
+    "alt": {
+      "ko": "조명 샷 01",
+      "en": "Lighting Shot 01",
+      "ja": "ライティングショット 01"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "lighting-angle-01-1080",
+    "src": "/media/lighting/angle-01-1080x1440.webp",
+    "type": "image",
+    "alt": {
+      "ko": "조명 샷 01",
+      "en": "Lighting Shot 01",
+      "ja": "ライティングショット 01"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "lighting-angle-01-1440",
+    "src": "/media/lighting/angle-01-1440x1920.webp",
+    "type": "image",
+    "alt": {
+      "ko": "조명 샷 01",
+      "en": "Lighting Shot 01",
+      "ja": "ライティングショット 01"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "lighting-angle-02-720",
+    "src": "/media/lighting/angle-02-720x960.webp",
+    "type": "image",
+    "alt": {
+      "ko": "조명 샷 02",
+      "en": "Lighting Shot 02",
+      "ja": "ライティングショット 02"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "lighting-angle-02-1080",
+    "src": "/media/lighting/angle-02-1080x1440.webp",
+    "type": "image",
+    "alt": {
+      "ko": "조명 샷 02",
+      "en": "Lighting Shot 02",
+      "ja": "ライティングショット 02"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "lighting-angle-02-1440",
+    "src": "/media/lighting/angle-02-1440x1920.webp",
+    "type": "image",
+    "alt": {
+      "ko": "조명 샷 02",
+      "en": "Lighting Shot 02",
+      "ja": "ライティングショット 02"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "lighting-angle-03-720",
+    "src": "/media/lighting/angle-03-720x960.webp",
+    "type": "image",
+    "alt": {
+      "ko": "조명 샷 03",
+      "en": "Lighting Shot 03",
+      "ja": "ライティングショット 03"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "lighting-angle-03-1080",
+    "src": "/media/lighting/angle-03-1080x1440.webp",
+    "type": "image",
+    "alt": {
+      "ko": "조명 샷 03",
+      "en": "Lighting Shot 03",
+      "ja": "ライティングショット 03"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "lighting-angle-03-1440",
+    "src": "/media/lighting/angle-03-1440x1920.webp",
+    "type": "image",
+    "alt": {
+      "ko": "조명 샷 03",
+      "en": "Lighting Shot 03",
+      "ja": "ライティングショット 03"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "lighting-angle-04-720",
+    "src": "/media/lighting/angle-04-720x960.webp",
+    "type": "image",
+    "alt": {
+      "ko": "조명 샷 04",
+      "en": "Lighting Shot 04",
+      "ja": "ライティングショット 04"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "lighting-angle-04-1080",
+    "src": "/media/lighting/angle-04-1080x1440.webp",
+    "type": "image",
+    "alt": {
+      "ko": "조명 샷 04",
+      "en": "Lighting Shot 04",
+      "ja": "ライティングショット 04"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "lighting-angle-04-1440",
+    "src": "/media/lighting/angle-04-1440x1920.webp",
+    "type": "image",
+    "alt": {
+      "ko": "조명 샷 04",
+      "en": "Lighting Shot 04",
+      "ja": "ライティングショット 04"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "lighting-angle-05-720",
+    "src": "/media/lighting/angle-05-720x960.webp",
+    "type": "image",
+    "alt": {
+      "ko": "조명 샷 05",
+      "en": "Lighting Shot 05",
+      "ja": "ライティングショット 05"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "lighting-angle-05-1080",
+    "src": "/media/lighting/angle-05-1080x1440.webp",
+    "type": "image",
+    "alt": {
+      "ko": "조명 샷 05",
+      "en": "Lighting Shot 05",
+      "ja": "ライティングショット 05"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "lighting-angle-05-1440",
+    "src": "/media/lighting/angle-05-1440x1920.webp",
+    "type": "image",
+    "alt": {
+      "ko": "조명 샷 05",
+      "en": "Lighting Shot 05",
+      "ja": "ライティングショット 05"
+    },
+    "credit": "StudioRaming / Raming",
+    "model": "Mayo / まよ",
+    "modelCreator": "Chocolate rice",
+    "modelUrl": "https://booth.pm/ko/items/8122803"
+  },
+  {
+    "id": "world-adaptation-02",
+    "src": "/media/showcase/world-adaptation-02.webp",
+    "type": "image",
+    "alt": {
+      "ko": "MingToon 월드 적응 작례",
+      "en": "MingToon world adaptation showcase",
+      "ja": "MingToonのワールド適応作例"
+    },
+    "credit": "StudioRaming / Raming",
+    "sourceUrl": "https://pbs.twimg.com/media/HRU1IE-bsAABpZS.jpg?name=orig"
+  },
+  {
+    "id": "world-adaptation-03",
+    "src": "/media/showcase/world-adaptation-03.webp",
+    "type": "image",
+    "alt": {
+      "ko": "MingToon 월드 적응 작례",
+      "en": "MingToon world adaptation showcase",
+      "ja": "MingToonのワールド適応作例"
+    },
+    "credit": "StudioRaming / Raming",
+    "sourceUrl": "https://pbs.twimg.com/media/HRU1IE_acAA5lI-.jpg?name=orig"
+  },
+  {
+    "id": "world-adaptation-04",
+    "src": "/media/showcase/world-adaptation-04.webp",
+    "type": "image",
+    "alt": {
+      "ko": "MingToon 월드 적응 작례",
+      "en": "MingToon world adaptation showcase",
+      "ja": "MingToonのワールド適応作例"
+    },
+    "credit": "StudioRaming / Raming",
+    "sourceUrl": "https://pbs.twimg.com/media/HRU1TvgbQAAqYR4.jpg?name=orig"
+  },
+  {
+    "id": "light-volume-poster",
+    "src": "/media/showcase/light-volume-poster.webp",
+    "type": "image",
+    "alt": {
+      "ko": "Light Volume 월드의 MingToon 작례",
+      "en": "MingToon showcase in a Light Volume world",
+      "ja": "Light VolumeワールドでのMingToon作例"
+    },
+    "credit": "StudioRaming / Raming",
+    "sourceUrl": "https://pbs.twimg.com/amplify_video_thumb/2095640115913850880/img/I0HpZM_gS0CxOQ-p.jpg"
+  }
+]

@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="description" content="MingToon official website"><link rel="canonical" href="https://studioraming.github.io/mingtoon-site/en/addons/urp/"><link rel="alternate" hreflang="ko" href="https://studioraming.github.io/mingtoon-site/ko/addons/urp/"><link rel="alternate" hreflang="en" href="https://studioraming.github.io/mingtoon-site/en/addons/urp/"><link rel="alternate" hreflang="ja" href="https://studioraming.github.io/mingtoon-site/ja/addons/urp/"><link rel="alternate" hreflang="x-default" href="https://studioraming.github.io/mingtoon-site/ko/addons/urp/"><link rel="icon" href="/mingtoon-site/favicon.svg"><meta property="og:title" content="MingToon URP Add-on — MingToon"><meta property="og:description" content="MingToon official website"><meta property="og:image" content="https://studioraming.github.io/mingtoon-site/media/developing-mingtoon/hero-avatar.jpg"><meta property="og:type" content="website"><title>MingToon URP Add-on — MingToon</title><script>
+      document.documentElement.classList.add("js");
+    </script><link rel="stylesheet" href="/mingtoon-site/_astro/Base.DMFS7Xu4.css"></head><body><div class="ambient-light" aria-hidden="true"><i class="light-cone"></i><i class="light-ray ray-a"></i><i class="light-ray ray-b"></i><i class="pointer-glow"></i></div><a class="skip" href="#main">Skip to content</a><header class="header"><a class="wordmark" href="/mingtoon-site/en/"><b>MING</b><span>TOON</span></a><span class="beta">Open Beta</span><button class="menu-button" data-menu-toggle aria-expanded="false" aria-controls="site-nav"><span>Menu</span></button><div class="nav-wrap" data-menu id="site-nav"><nav aria-label="Main navigation"><a href="/mingtoon-site/en/">Home</a><a href="/mingtoon-site/en/posts/">Posts</a><a href="/mingtoon-site/en/showcase/">Showcase</a><a aria-current="page" href="/mingtoon-site/en/addons/">Official add-ons</a><a href="/mingtoon-site/en/license/">License</a><a href="https://studioraming.github.io/mingtoon-docs/en/" target="_blank">Docs ↗</a></nav><div class="locales" aria-label="Language"><a href="/mingtoon-site/ko/addons/urp/">KO</a><a href="/mingtoon-site/en/addons/urp/" aria-current="page">EN</a><a href="/mingtoon-site/ja/addons/urp/">JA</a></div></div></header><main id="main"><header class="page-hero"><span class="kicker">Preparing</span><h1>MingToon URP Add-on</h1><p>In preparation as a standalone paid add-on to the BRP core. Every commercial license includes the URP version.</p></header><section class="prose"><h2>Distribution</h2><p>In preparation as a standalone paid add-on to the BRP core. Every commercial license includes the URP version.</p><span class="button disabled" aria-disabled="true">BOOTH · Preparing</span><p><a href="https://studioraming.github.io/mingtoon-docs/en/">Docs ↗</a></p></section></main><footer><div><b>StudioRaming</b><p>Support &amp; links</p></div><div class="footer-links"><a href="/mingtoon-site/en/showcase/">Showcase</a><a href="https://discord.gg/Zsj6pkWKKs">Bug-report channel · Discord ↗</a><a href="mailto:studioraming@gmail.com">Business enquiries · Email ↗</a><a href="https://x.com/kim_raming">X ↗</a><a href="https://studioraming.github.io/mingtoon-docs/en/">Docs ↗</a><a href="/mingtoon-site/en/download/">Join Open Beta ↗</a></div><small>© 2026 StudioRaming</small></footer><script>
+      const seen = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("seen");
+              seen.unobserve(e.target);
+            }
+          }),
+        { threshold: 0.12 },
+      );
+      document
+        .querySelectorAll("[data-reveal]")
+        .forEach((e) => seen.observe(e));
+      const menu = document.querySelector("[data-menu]"),
+        toggle = document.querySelector("[data-menu-toggle]");
+      toggle?.addEventListener("click", () => {
+        const open = menu?.toggleAttribute("data-open");
+        toggle.setAttribute("aria-expanded", String(open));
+      });
+      addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && menu?.hasAttribute("data-open")) {
+          menu.removeAttribute("data-open");
+          toggle?.setAttribute("aria-expanded", "false");
+          toggle?.focus();
+        }
+      });
+      const videos = [...document.querySelectorAll("video")];
+      const finePointer =
+        matchMedia("(pointer: fine)").matches &&
+        !matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const glow = document.querySelector(".ambient-light");
+      let glowFrame = 0;
+      let lightX = innerWidth * 0.66,
+        lightY = innerHeight * 0.35;
+      let targetX = lightX,
+        targetY = lightY;
+      const followLight = () => {
+        glowFrame = 0;
+        if (document.hidden || !glow) return;
+        lightX += (targetX - lightX) * 0.065;
+        lightY += (targetY - lightY) * 0.065;
+        glow.style.setProperty("--pointer-x", lightX + "px");
+        glow.style.setProperty("--pointer-y", lightY + "px");
+        if (Math.abs(targetX - lightX) + Math.abs(targetY - lightY) > 0.5)
+          glowFrame = requestAnimationFrame(followLight);
+      };
+      if (finePointer && glow)
+        addEventListener(
+          "pointermove",
+          (event) => {
+            targetX = event.clientX;
+            targetY = event.clientY;
+            if (!glowFrame) glowFrame = requestAnimationFrame(followLight);
+          },
+          { passive: true },
+        );
+      const conserve =
+        matchMedia("(prefers-reduced-motion: reduce)").matches ||
+        navigator.connection?.saveData;
+      if (conserve)
+        videos.forEach((v) => {
+          v.autoplay = false;
+          v.pause();
+          v.preload = "metadata";
+        });
+      const videoObserver = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            const v = e.target;
+            if (!e.isIntersecting) v.pause();
+            else if (!conserve && v.autoplay) v.play().catch(() => {});
+          }),
+        { threshold: 0.05 },
+      );
+      videos.forEach((v) => videoObserver.observe(v));
+      document.addEventListener("visibilitychange", () => {
+        document.body.classList.toggle("motion-paused", document.hidden);
+        if (document.hidden) videos.forEach((v) => v.pause());
+      });
+    </script></body></html>

@@ -1,0 +1,83 @@
+<!DOCTYPE html><html lang="ko"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width"><meta name="description" content="MingToon official website"><link rel="canonical" href="https://studioraming.github.io/mingtoon-site/ko/posts/"><link rel="alternate" hreflang="ko" href="https://studioraming.github.io/mingtoon-site/ko/posts/"><link rel="alternate" hreflang="en" href="https://studioraming.github.io/mingtoon-site/en/posts/"><link rel="alternate" hreflang="ja" href="https://studioraming.github.io/mingtoon-site/ja/posts/"><link rel="alternate" hreflang="x-default" href="https://studioraming.github.io/mingtoon-site/ko/posts/"><link rel="icon" href="/mingtoon-site/favicon.svg"><meta property="og:title" content="소식 — MingToon"><meta property="og:description" content="MingToon official website"><meta property="og:image" content="https://studioraming.github.io/mingtoon-site/media/developing-mingtoon/hero-avatar.jpg"><meta property="og:type" content="website"><title>소식 — MingToon</title><script>
+      document.documentElement.classList.add("js");
+    </script><link rel="stylesheet" href="/mingtoon-site/_astro/Base.DMFS7Xu4.css"></head><body><div class="ambient-light" aria-hidden="true"><i class="light-cone"></i><i class="light-ray ray-a"></i><i class="light-ray ray-b"></i><i class="pointer-glow"></i></div><a class="skip" href="#main">본문으로 건너뛰기</a><header class="header"><a class="wordmark" href="/mingtoon-site/ko/"><b>MING</b><span>TOON</span></a><span class="beta">오픈 베타</span><button class="menu-button" data-menu-toggle aria-expanded="false" aria-controls="site-nav"><span>메뉴</span></button><div class="nav-wrap" data-menu id="site-nav"><nav aria-label="주요 메뉴"><a href="/mingtoon-site/ko/">홈</a><a aria-current="page" href="/mingtoon-site/ko/posts/">소식</a><a href="/mingtoon-site/ko/showcase/">작례</a><a href="/mingtoon-site/ko/addons/">공식 애드온</a><a href="/mingtoon-site/ko/license/">라이선스</a><a href="https://studioraming.github.io/mingtoon-docs/" target="_blank">문서 ↗</a></nav><div class="locales" aria-label="언어"><a href="/mingtoon-site/ko/posts/" aria-current="page">KO</a><a href="/mingtoon-site/en/posts/">EN</a><a href="/mingtoon-site/ja/posts/">JA</a></div></div></header><main id="main"><header class="page-hero"><span class="kicker">JOURNAL / KO</span><h1>소식</h1></header><section class="post-list"><a class="post-line" href="/mingtoon-site/ko/posts/developing-mingtoon/"><time>2026-07-27</time><h2>MingToon 개발 — 셰이더 실험을 하나로 모으기</h2><span>→</span></a></section></main><footer><div><b>StudioRaming</b><p>지원 및 링크</p></div><div class="footer-links"><a href="/mingtoon-site/ko/showcase/">작례</a><a href="https://discord.gg/Zsj6pkWKKs">버그 제보 채널 · Discord ↗</a><a href="mailto:studioraming@gmail.com">기업 문의 · 이메일 ↗</a><a href="https://x.com/kim_raming">X ↗</a><a href="https://studioraming.github.io/mingtoon-docs/">Docs ↗</a><a href="/mingtoon-site/ko/download/">오픈 베타 참여 ↗</a></div><small>© 2026 StudioRaming</small></footer><script>
+      const seen = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            if (e.isIntersecting) {
+              e.target.classList.add("seen");
+              seen.unobserve(e.target);
+            }
+          }),
+        { threshold: 0.12 },
+      );
+      document
+        .querySelectorAll("[data-reveal]")
+        .forEach((e) => seen.observe(e));
+      const menu = document.querySelector("[data-menu]"),
+        toggle = document.querySelector("[data-menu-toggle]");
+      toggle?.addEventListener("click", () => {
+        const open = menu?.toggleAttribute("data-open");
+        toggle.setAttribute("aria-expanded", String(open));
+      });
+      addEventListener("keydown", (e) => {
+        if (e.key === "Escape" && menu?.hasAttribute("data-open")) {
+          menu.removeAttribute("data-open");
+          toggle?.setAttribute("aria-expanded", "false");
+          toggle?.focus();
+        }
+      });
+      const videos = [...document.querySelectorAll("video")];
+      const finePointer =
+        matchMedia("(pointer: fine)").matches &&
+        !matchMedia("(prefers-reduced-motion: reduce)").matches;
+      const glow = document.querySelector(".ambient-light");
+      let glowFrame = 0;
+      let lightX = innerWidth * 0.66,
+        lightY = innerHeight * 0.35;
+      let targetX = lightX,
+        targetY = lightY;
+      const followLight = () => {
+        glowFrame = 0;
+        if (document.hidden || !glow) return;
+        lightX += (targetX - lightX) * 0.065;
+        lightY += (targetY - lightY) * 0.065;
+        glow.style.setProperty("--pointer-x", lightX + "px");
+        glow.style.setProperty("--pointer-y", lightY + "px");
+        if (Math.abs(targetX - lightX) + Math.abs(targetY - lightY) > 0.5)
+          glowFrame = requestAnimationFrame(followLight);
+      };
+      if (finePointer && glow)
+        addEventListener(
+          "pointermove",
+          (event) => {
+            targetX = event.clientX;
+            targetY = event.clientY;
+            if (!glowFrame) glowFrame = requestAnimationFrame(followLight);
+          },
+          { passive: true },
+        );
+      const conserve =
+        matchMedia("(prefers-reduced-motion: reduce)").matches ||
+        navigator.connection?.saveData;
+      if (conserve)
+        videos.forEach((v) => {
+          v.autoplay = false;
+          v.pause();
+          v.preload = "metadata";
+        });
+      const videoObserver = new IntersectionObserver(
+        (es) =>
+          es.forEach((e) => {
+            const v = e.target;
+            if (!e.isIntersecting) v.pause();
+            else if (!conserve && v.autoplay) v.play().catch(() => {});
+          }),
+        { threshold: 0.05 },
+      );
+      videos.forEach((v) => videoObserver.observe(v));
+      document.addEventListener("visibilitychange", () => {
+        document.body.classList.toggle("motion-paused", document.hidden);
+        if (document.hidden) videos.forEach((v) => v.pause());
+      });
+    </script></body></html>
